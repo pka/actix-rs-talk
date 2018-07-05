@@ -1,14 +1,19 @@
-all: html/index.html
+all: actix-rs.html
 
-html/index.html: actix-rs.md reveal.js/css/reveal.css
-	pandoc -t revealjs --self-contained -s $< -o $@
+actix-rs.html: actix-rs.md reveal.js/css/reveal.css
+	pandoc -t revealjs -s $< -o $@
+
+watch: actix-rs.md reveal.js/css/reveal.css
+	fswatch -o --event Updated $< | xargs -n1 -I{} sh -c "echo Rebuilding...; pandoc -t revealjs -s $< -o actix-rs.html"
+
+full: actix-rs.md reveal.js/css/reveal.css
+	pandoc -t revealjs --self-contained -s $< -o actix-rs.html
 
 reveal_version=3.6.0
 
-$(reveal_version).tar.gz:
-	wget https://github.com/hakimel/reveal.js/archive/$(reveal_version).tar.gz
-
-reveal.js/css/reveal.css: $(reveal_version).tar.gz
-	tar xvzf $(reveal_version).tar.gz
+reveal.js/css/reveal.css:
+	wget -O /tmp/$(reveal_version).tar.gz https://github.com/hakimel/reveal.js/archive/$(reveal_version).tar.gz
+	tar xvzf /tmp/$(reveal_version).tar.gz
+	rm /tmp/$(reveal_version).tar.gz
 	mv reveal.js-$(reveal_version) reveal.js
-	touch $*
+	touch $@
