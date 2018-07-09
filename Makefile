@@ -3,7 +3,7 @@ all: actix-rs.html
 actix-rs.html: actix-rs.md reveal.js/css/reveal.css
 	pandoc -t revealjs -s $< -o $@
 
-watch: actix-rs.md reveal.js/css/reveal.css
+watch: actix-rs.md reveal.js/css/reveal.css actix-rs.html
 	fswatch -o --event Updated $< | xargs -n1 -I{} sh -c "echo Rebuilding...; pandoc -t revealjs -s $< -o actix-rs.html"
 
 full: actix-rs.md reveal.js/css/reveal.css
