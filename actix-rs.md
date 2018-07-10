@@ -1,12 +1,8 @@
-% actix.rs
+% Actix
 % Pirmin Kalberer @implgeo
 % Rust Zurich, 11. Juli 2018
 
 # About me
-
-## My language timeline
-
-..
 
 ## Sourcepole
 
@@ -14,113 +10,465 @@
   (C++, Python, React, Ruby on Rails, ...)
 * Creating maps with Rust!
 
+## Language history
+
+. . .
+
+Basic
+
+. . .
+
+Assembler (6502)
+
+. . .
+
+(Turbo) Pascal
+
+. . .
+
+Modula
+
+. . .
+
+C
+
+. . .
+
+C++
+
+. . .
+
+Java
+
+---
+
+Eiffel
+
+. . .
+
+Perl
+
+. . .
+
+Ruby
+
+. . .
+
+Javascript
+
+. . .
+
+Python
+
+. . .
+
+Rust (2016)
+
+
 # Rust Web Frameworks
 
-## Rust Web Frameworks
+## Hyper
 
-* Rocket
-  - Nice API
-  - Requires Nightly
-* XXX
-  - Asynchrounous
+* Low-Level
+* Synchronous -> Asynchronous
+* Base of iron, gotham, rocket, nickel, ...
 
-## Sync vs. Async
+## Rocket
 
-...
-
-## Benchmark 1/5
-
-* Bench 1
-
-## Actix Results
-
-* xxx
-
-## Benchmark 2/5
-
-* Bench 1
-
-## ...
-
-
-# actix.rs
-
-##
-
-`![](https://actix.rs/img/logo-large.png)`
+* Nice API & concepts
+* Beautiful documentation
+* Requires Nightly
+* Synchronous
 
 ## actix-web
 
-* Supported HTTP/1.x and HTTP/2.0 protocols
+![](images/tweet1.png)
+
+---
+
+![](images/tweet2.png)
+
+. . .
+
+![](images/tweet3.png)
+
+# Benchmark
+
+## TechEmpower Web Framework Benchmark
+
+Performance high-water marks for trivial exercises of framework functionality (routing, ORM, templates, etc.).
+
+Real world apps will be substantially more complex with far lower RPS.
+
+## JSON serialization
+
+JSON serialization of a freshly-instantiated object.
+
+```
+{"message":"Hello, World!"}
+```
+
+---
+
+![](images/bench1.png)
+
+## Single query
+
+Fetching a single row from a simple database table and serializing as a JSON response.
+
+```
+{"id":3217,"randomNumber":2149}
+```
+
+---
+
+![](images/bench2.png)
+
+
+## Multiple queries
+
+Fetching multiple rows from a simple database table and serializing these rows as a JSON response.
+
+The test is run multiple times: testing 1, 5, 10, 15, and 20 queries per request. All tests are run at 256 concurrency.
+
+---
+
+![](images/bench3.png)
+
+## Fortunes
+
+The framework's ORM is used to fetch all rows from a database table containing an unknown number of Unix fortune cookie messages. An additional fortune cookie message is inserted into the list at runtime and then the list is sorted by the message text. Finally, the list is delivered to the client using a server-side HTML template.
+
+---
+
+![](images/bench4.png)
+
+## Data updates
+
+Fetching multiple rows from a simple database table, converting the rows to in-memory objects, modifying one attribute of each object in memory, updating each associated row in the database individually, and then serializing the list of objects as a JSON response.
+
+---
+
+![](images/bench5.png)
+
+## Plaintext
+
+"Hello, World" message rendered as plain text.
+```
+Hello, World!
+```
+
+---
+
+![](images/bench6.png)
+
+# Synchronous vs. Asynchronous
+
+## Synchronous
+
+. . .
+
+Single Threaded:
+
+![](images/sync1.png)
+
+. . .
+
+Multi-Threaded:
+
+![](images/sync2.png)
+
+https://codewala.net/2015/07/29/concurrency-vs-multi-threading-vs-asynchronous-programming-explained/
+
+
+## Asynchronous
+
+. . .
+
+Single Threaded:
+
+![](images/async1.png)
+
+. . .
+
+Multi-Threaded:
+
+![](images/async2.png)
+
+
+# Actix actors framework
+
+## Actor model
+
+An actor is a computational entity that contains state information and can send, receive and handle messages.
+
+![](images/actors.png)
+
+https://www.brianstorti.com/the-actor-model/
+
+## Actix features
+
+* Async/Sync actors
+* Actor communication in a local/thread context
+* Uses Futures for asynchronous message handling
+* Actor supervision
+* Typed messages
+
+## Actor
+
+```Rust
+struct MyActor {
+    count: usize,
+}
+
+impl Actor for MyActor {
+    type Context = Context<Self>;
+}
+```
+
+## Message
+
+```Rust
+struct Ping(usize);
+
+impl Message for Ping {
+    type Result = usize;
+}
+```
+
+## Handler
+
+```Rust
+impl Handler<Ping> for MyActor {
+    type Result = usize;
+
+    fn handle(&mut self, msg: Ping, ctx: &mut Context<Self>) -> Self::Result {
+        self.count += msg.0;
+
+        self.count
+    }
+}
+```
+
+## System
+
+```Rust
+fn main() {
+    let system = System::new("test");
+
+    // start new actor
+    let addr: Addr<Unsync, _> = MyActor{count: 10}.start();
+
+    // send message and get future for result
+    let res = addr.send(Ping(10));
+
+    Arbiter::handle().spawn(
+        res.map(|res| {
+            println!("RESULT: {}", res == 20);
+        })
+        .map_err(|_| ()));
+
+    system.run();
+}
+
+```
+
+
+# Actix web
+
+## Features
+
+* Support for HTTP/1.x and HTTP/2.0 protocols
 * Streaming and pipelining
 * Keep-alive and slow requests handling
 * Client/server WebSockets support
 * Transparent content compression/decompression (br, gzip, deflate)
 * Configurable request routing
 
-## actix-web
+---
 
 * Graceful server shutdown
 * Multipart streams
 * Static assets
 * SSL support with OpenSSL or native-tls
-* Middlewares (Logger, Session, Redis sessions, DefaultHeaders, CORS, CSRF)
+* Middleware (Logger, Session, Redis sessions, DefaultHeaders, CORS, CSRF)
 * Includes an asynchronous HTTP client
 * Built on top of Actix actor framework
 
-## Sample application
+https://actix.rs
+
+## Hello World
 
 ```Rust
 extern crate actix_web;
-use actix_web::{server, App, HttpRequest, Responder};
+use actix_web::{server, App, HttpRequest};
 
-fn greet(req: HttpRequest) -> impl Responder {
-    let to = req.match_info().get("name").unwrap_or("World");
-    format!("Hello {}!", to)
+fn index(_req: HttpRequest) -> &'static str {
+    "Hello world!"
 }
 
 fn main() {
-    server::new(|| {
-        App::new()
-            .resource("/", |r| r.f(greet))
-            .resource("/{name}", |r| r.f(greet))
-    })
-    .bind("127.0.0.1:8000")
-    .expect("Can not bind to port 8000")
-    .run();
+    server::new(|| App::new().resource("/", |r| r.f(index)))
+        .bind("127.0.0.1:8088")
+        .unwrap()
+        .run();
 }
 ```
 
-## Responders
+## Application State
 
 ```Rust
-#[derive(Serialize)]
-struct Measurement {
-    temperature: f32,
+struct AppState {
+    counter: Cell<usize>,
 }
 
-fn hello_world() -> impl Responder {
-    "Hello World!"
+fn index(req: HttpRequest<AppState>) -> String {
+    let count = req.state().counter.get() + 1; // <- get count
+    req.state().counter.set(count); // <- store new count in state
+
+    format!("Request number: {}", count) // <- response with count
 }
 
-fn current_temperature(_req: HttpRequest) -> impl Responder {
-    Json(Measurement { temperature: 42.3 })
+// State initialization:
+App::with_state(AppState { counter: Cell::new(0) })
+    .resource("/", |r| r.method(http::Method::GET).f(index))
+    .finish()
+```
+
+---
+
+Application state is shared with all routes and resources within the same application (`App`).
+
+Note: Http server constructs an application instance for each thread, thus application state must be constructed multiple times.
+
+## Request handler
+
+```Rust
+fn index(_req: HttpRequest) -> &'static str {
+    "Hello world!"
 }
 ```
 
-## Extractors
+`Handler` trait: A request handler accepts an `HttpRequest` instance as parameter 
+and returns a type that can be converted into `HttpResponse` (`Responder` trait).
+
+
+## Async handlers
+
+```Rust
+fn async(req: HttpRequest) -> Box<Future<Item=&'static str, Error=Error>> {
+    result(Ok("Welcome!"))
+        .responder()
+}
+
+fn main() {
+    App::new()
+        .resource("/async", |r| r.route().a(async)) // <- use `a`
+        .finish();
+}
+```
+
+## Path info extraction
+
+```Rust
+/// extract path info from "/{username}/{count}/index.html" url
+/// {username} - deserializes to a String
+/// {count} -  - deserializes to a u32
+fn index(info: Path<(String, u32)>) -> Result<String> {
+    Ok(format!("Welcome {}! {}", info.0, info.1))
+}
+
+fn main() {
+    let app = App::new().resource(
+        "/{username}/{count}/index.html", // <- define path parameters
+        |r| r.method(http::Method::GET).with(index) // <- use `with` extractor
+        .finish();
+    );
+}
+```
+
+---
+
+Option 2: Access by calling extract() on the extractor
+
+```Rust
+use actix_web::FromRequest;
+
+fn index(req: HttpRequest) -> HttpResponse {
+    let params = Path::<(String, String)>::extract(&req);
+    let info = Json::<MyInfo>::extract(&req); 
+
+    ...
+}
+```
+
+## Path info extraction with structs
 
 ```Rust
 #[derive(Deserialize)]
-struct Event {
-    timestamp: f64,
-    kind: String,
-    tags: Vec<String>,
+struct Info {
+    username: String,
 }
 
-fn capture_event(evt: Json<Event>) -> impl Responder {
-    let id = store_event_in_db(evt.timestamp, evt.kind, evt.tags);
-    format!("got event {}", id)
+/// extract path info using serde
+fn index(info: Path<Info>) -> Result<String> {
+    Ok(format!("Welcome {}!", info.username))
+}
+
+```
+
+## Query parameter extraction
+
+```Rust
+#[derive(Deserialize)]
+struct Info {
+    username: String,
+}
+
+// this handler get called only if request's query contains `username` field
+fn index(info: Query<Info>) -> String {
+    format!("Welcome {}!", info.username)
+}
+
+fn main() {
+    let app = App::new().resource(
+       "/index.html",
+       |r| r.method(http::Method::GET).with(index)); // <- use `with` extractor
+}
+```
+
+## JSON in requests
+
+```Rust
+#[derive(Deserialize)]
+struct Info {
+    username: String,
+}
+
+/// deserialize `Info` from request's body
+fn index(info: Json<Info>) -> Result<String> {
+    Ok(format!("Welcome {}!", info.username))
+}
+
+fn main() {
+    let app = App::new().resource(
+       "/index.html",
+       |r| r.method(http::Method::POST).with(index));  // <- use `with` extractor
+}
+```
+
+## JSON in responses
+
+```Rust
+#[derive(Serialize)]
+struct MyObj {
+    name: String,
+}
+
+fn index(req: HttpRequest) -> Result<Json<MyObj>> {
+    Ok(Json(MyObj {
+        name: req.match_info().query("name")?,
+    }))
 }
 ```
 
@@ -128,15 +476,33 @@ fn capture_event(evt: Json<Event>) -> impl Responder {
 
 ```Rust
 #[derive(Deserialize)]
-struct Register {
+struct FormData {
     username: String,
-    country: String,
 }
 
-fn register(data: Form<Register>) -> impl Responder {
-    format!("Hello {} from {}!", data.username, data.country)
+/// extract form data using serde
+/// this handler gets called only if the content type is *x-www-form-urlencoded*
+/// and the content of the request could be deserialized to a `FormData` struct
+fn index(form: Form<FormData>) -> Result<String> {
+     Ok(format!("Welcome {}!", form.username))
 }
 ```
+
+## Multiple extractors
+
+```Rust
+fn index((path, query): (Path<(u32, String)>, Query<Info>)) -> String {
+    format!("Welcome {}!", query.username)
+}
+
+fn main() {
+    let app = App::new().resource(
+       "/users/{userid}/{friend}",                    // <- define path parameters
+       |r| r.method(http::Method::GET).with(index)); // <- use `with` extractor
+}
+```
+
+Actix provides extractor implementations for tuples (up to 10 elements) whose elements implement FromRequest.
 
 ## Request routing
 
@@ -157,26 +523,6 @@ fn main() {
 }
 ```
 
-## HTTP Client API
-
-```Rust
-use actix_web::client;
-
-fn main() {
-    tokio::run({
-        client::get("http://www.rust-lang.org")   // <- Create request builder
-            .header("User-Agent", "Actix-web")
-            .finish().unwrap()
-            .send()                               // <- Send http request
-            .map_err(|_| ())
-            .and_then(|response| {                // <- server http response
-                println!("Response: {:?}", response);
-                Ok(())
-            })
-    });
-}
-```
-
 
 ## Middleware - CORS
 
@@ -193,13 +539,13 @@ let app = App::new().configure(|app| {
 });
 ```
 
-## Middleware - CORS (allow all)
+## Middleware - CORS (allow from all)
 
 ```Rust
 let app = App::new().configure(|app| {
     Cors::for_app(app) // <- Construct CORS middleware builder
-        .allowed_origin("https://www.rust-lang.org/")
-FIXME
+        .send_wildcard()
+        .allowed_methods(vec![Method::GET])
         .resource(/* ... */)
         .register()
 });
@@ -232,7 +578,10 @@ fn index(req: HttpRequest) -> Result<&'static str> {
 
     Ok("Welcome!")
 }
+```
+---
 
+```Rust
 fn main() {
     actix::System::run(|| {
         server::new(
@@ -272,7 +621,10 @@ fn logout(mut req: HttpRequest) -> HttpResponse {
     req.forget(); // <- remove identity
     HttpResponse::Ok().finish()
 }
+```
+---
 
+```Rust
 fn main() {
     let app = App::new().middleware(IdentityService::new(
         // <- create identity middleware
@@ -320,120 +672,26 @@ fn main() {
 }
 ```
 
-## JSON in requests
+
+## HTTP Client API
 
 ```Rust
-#[derive(Deserialize)]
-struct Info {
-    username: String,
-}
-
-/// deserialize `Info` from request's body
-fn index(info: Json<Info>) -> Result<String> {
-    Ok(format!("Welcome {}!", info.username))
-}
+use actix_web::client;
 
 fn main() {
-    let app = App::new().resource(
-       "/index.html",
-       |r| r.method(http::Method::POST).with(index));  // <- use `with` extractor
+    tokio::run({
+        client::get("http://www.rust-lang.org")   // <- Create request builder
+            .header("User-Agent", "Actix-web")
+            .finish().unwrap()
+            .send()                               // <- Send http request
+            .map_err(|_| ())
+            .and_then(|response| {                // <- server http response
+                println!("Response: {:?}", response);
+                Ok(())
+            })
+    });
 }
 ```
-
-## JSON in responses
-
-```Rust
-#[derive(Serialize)]
-struct MyObj {
-    name: String,
-}
-
-fn index(req: HttpRequest) -> Result<Json<MyObj>> {
-    Ok(Json(MyObj {
-        name: req.match_info().query("name")?,
-    }))
-}
-```
-
-## Path info extraction
-
-```Rust
-/// extract path info from "/{username}/{count}/index.html" url
-/// {username} - deserializes to a String
-/// {count} -  - deserializes to a u32
-fn index(info: Path<(String, u32)>) -> Result<String> {
-    Ok(format!("Welcome {}! {}", info.0, info.1))
-}
-
-fn main() {
-    let app = App::new().resource(
-        "/{username}/{count}/index.html", // <- define path parameters
-        |r| r.method(http::Method::GET).with(index),
-    ); // <- use `with` extractor
-}
-```
-
-## Path info extraction with structs
-
-```Rust
-#[derive(Deserialize)]
-struct Info {
-    username: String,
-}
-
-/// extract path info using serde
-fn index(info: Path<Info>) -> Result<String> {
-    Ok(format!("Welcome {}!", info.username))
-}
-
-```
-
-
-## Query parameter extraction
-
-
-```Rust
-#[derive(Deserialize)]
-struct Info {
-    username: String,
-}
-
-// use `with` extractor for query info
-// this handler get called only if request's query contains `username` field
-fn index(info: Query<Info>) -> String {
-    format!("Welcome {}!", info.username)
-}
-
-fn main() {
-    let app = App::new().resource(
-       "/index.html",
-       |r| r.method(http::Method::GET).with(index)); // <- use `with` extractor
-}
-```
-
-
-## .
-
-```Rust
-```
-
-
-## .
-
-```Rust
-```
-
-
-## .
-
-```Rust
-```
-
-
-## actix
-
-## Actors
-
 
 # Real World Applications
 
@@ -456,4 +714,5 @@ fn main() {
 * Actix-Web + Actix (planned)
 * Integrated web app
 * PostGIS + GDAL data sources
-* https://t-rex.tileserver.ch/
+
+https://t-rex.tileserver.ch/
