@@ -1,13 +1,17 @@
+# https://pandoc.org/MANUAL.html#producing-slide-shows-with-pandoc
+
+SLIDE_OPTIONS=-t revealjs --css=./custom.css -s
+
 all: actix-rs.html
 
 actix-rs.html: actix-rs.md reveal.js/css/reveal.css
-	pandoc -t revealjs -s $< -o $@
+	pandoc $(SLIDE_OPTIONS) $< -o $@
 
 watch: actix-rs.md reveal.js/css/reveal.css actix-rs.html
-	fswatch -o --event Updated $< | xargs -n1 -I{} sh -c "echo Rebuilding...; pandoc -t revealjs -s $< -o actix-rs.html"
+	fswatch -o --event Updated $< | xargs -n1 -I{} sh -c "echo Rebuilding...; pandoc $(SLIDE_OPTIONS) $< -o actix-rs.html"
 
 full: actix-rs.md reveal.js/css/reveal.css
-	pandoc -t revealjs --self-contained -s $< -o actix-rs.html
+	pandoc  $(SLIDE_OPTIONS) --self-contained $< -o actix-rs.html
 
 reveal_version=3.6.0
 
