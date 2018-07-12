@@ -4,12 +4,6 @@
 
 # About me
 
-## Sourcepole
-
-* Geospatial software
-  (C++, Python, React, Ruby on Rails, ...)
-* Creating maps with Rust!
-
 ## Language history
 
 . . .
@@ -63,6 +57,12 @@ Python
 . . .
 
 Rust (2016)
+
+## Sourcepole
+
+* Geospatial software
+  (C++, Python, React, Ruby on Rails, ...)
+* Creating maps with Rust!
 
 
 # Rust Web Frameworks
