@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Pirmin Kalberer @implgeo">
+  <title>Actix</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="reveal.js/css/reveal.css">
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="reveal.js/css/theme/black.css" id="theme">
+  <link rel="stylesheet" href="./custom.css"/>
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? 'reveal.js/css/print/pdf.css' : 'reveal.js/css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  </script>
+  <!--[if lt IE 9]>
+  <script src="reveal.js/lib/js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Actix</h1>
+  <p class="author">Pirmin Kalberer <span class="citation" data-cites="implgeo">@implgeo</span></p>
+  <p class="date">Rust Zurich, 11. Juli 2018</p>
+</section>
+
+<section><section id="about-me" class="title-slide slide level1"><h1>About me</h1></section><section id="language-history" class="slide level2">
+<h2>Language history</h2>
+<div class="fragment">
+<p>Basic</p>
+</div>
+<div class="fragment">
+<p>Assembler (6502)</p>
+</div>
+<div class="fragment">
+<p>(Turbo) Pascal</p>
+</div>
+<div class="fragment">
+<p>Modula</p>
+</div>
+<div class="fragment">
+<p>C</p>
+</div>
+<div class="fragment">
+<p>C++</p>
+</div>
+<div class="fragment">
+<p>Java</p>
+</div>
+</section><section class="slide level2">
+
+<p>Eiffel</p>
+<div class="fragment">
+<p>Perl</p>
+</div>
+<div class="fragment">
+<p>Ruby</p>
+</div>
+<div class="fragment">
+<p>Javascript</p>
+</div>
+<div class="fragment">
+<p>Python</p>
+</div>
+<div class="fragment">
+<p>Rust (2016)</p>
+</div>
+</section><section id="sourcepole" class="slide level2">
+<h2>Sourcepole</h2>
+<ul>
+<li>Geospatial software (C++, Python, React, Ruby on Rails, …)</li>
+<li>Creating maps with Rust!</li>
+</ul>
+</section></section>
+<section><section id="rust-web-frameworks" class="title-slide slide level1"><h1>Rust Web Frameworks</h1></section><section id="hyper" class="slide level2">
+<h2>Hyper</h2>
+<ul>
+<li>Low-Level</li>
+<li>Synchronous -&gt; Asynchronous</li>
+<li>Base of iron, gotham, rocket, nickel, …</li>
+</ul>
+</section><section id="rocket" class="slide level2">
+<h2>Rocket</h2>
+<ul>
+<li>Nice API &amp; concepts</li>
+<li>Beautiful documentation</li>
+<li>Requires Nightly</li>
+<li>Synchronous</li>
+</ul>
+</section><section id="actix-web" class="slide level2">
+<h2>actix-web</h2>
+<p><img data-src="images/tweet1.png" /></p>
+</section><section class="slide level2">
+
+<p><img data-src="images/tweet2.png" /></p>
+<div class="fragment">
+<p><img data-src="images/tweet3.png" /></p>
+</div>
+</section></section>
+<section><section id="benchmark" class="title-slide slide level1"><h1>Benchmark</h1></section><section id="techempower-web-framework-benchmark" class="slide level2">
+<h2>TechEmpower Web Framework Benchmark</h2>
+<p>Performance high-water marks for trivial exercises of framework functionality (routing, ORM, templates, etc.).</p>
+<p>Real world apps will be substantially more complex with far lower RPS.</p>
+</section><section id="json-serialization" class="slide level2">
+<h2>JSON serialization</h2>
+<p>JSON serialization of a freshly-instantiated object.</p>
+<pre><code>{&quot;message&quot;:&quot;Hello, World!&quot;}</code></pre>
+</section><section class="slide level2">
+
+<p><img data-src="images/bench1.png" /></p>
+</section><section id="single-query" class="slide level2">
+<h2>Single query</h2>
+<p>Fetching a single row from a simple database table and serializing as a JSON response.</p>
+<pre><code>{&quot;id&quot;:3217,&quot;randomNumber&quot;:2149}</code></pre>
+</section><section class="slide level2">
+
+<p><img data-src="images/bench2.png" /></p>
+</section><section id="multiple-queries" class="slide level2">
+<h2>Multiple queries</h2>
+<p>Fetching multiple rows from a simple database table and serializing these rows as a JSON response.</p>
+<p>The test is run multiple times: testing 1, 5, 10, 15, and 20 queries per request. All tests are run at 256 concurrency.</p>
+</section><section class="slide level2">
+
+<p><img data-src="images/bench3.png" /></p>
+</section><section id="fortunes" class="slide level2">
+<h2>Fortunes</h2>
+<p>The framework’s ORM is used to fetch all rows from a database table containing an unknown number of Unix fortune cookie messages. An additional fortune cookie message is inserted into the list at runtime and then the list is sorted by the message text. Finally, the list is delivered to the client using a server-side HTML template.</p>
+</section><section class="slide level2">
+
+<p><img data-src="images/bench4.png" /></p>
+</section><section id="data-updates" class="slide level2">
+<h2>Data updates</h2>
+<p>Fetching multiple rows from a simple database table, converting the rows to in-memory objects, modifying one attribute of each object in memory, updating each associated row in the database individually, and then serializing the list of objects as a JSON response.</p>
+</section><section class="slide level2">
+
+<p><img data-src="images/bench5.png" /></p>
+</section><section id="plaintext" class="slide level2">
+<h2>Plaintext</h2>
+<p>“Hello, World” message rendered as plain text.</p>
+<pre><code>Hello, World!</code></pre>
+</section><section class="slide level2">
+
+<p><img data-src="images/bench6.png" /></p>
+</section></section>
+<section><section id="synchronous-vs.-asynchronous" class="title-slide slide level1"><h1>Synchronous vs. Asynchronous</h1></section><section id="synchronous" class="slide level2">
+<h2>Synchronous</h2>
+<div class="fragment">
+<p>Single Threaded:</p>
+<p><img data-src="images/sync1.png" /></p>
+</div>
+<div class="fragment">
+<p>Multi-Threaded:</p>
+<p><img data-src="images/sync2.png" /></p>
+<p>https://codewala.net/2015/07/29/concurrency-vs-multi-threading-vs-asynchronous-programming-explained/</p>
+</div>
+</section><section id="asynchronous" class="slide level2">
+<h2>Asynchronous</h2>
+<div class="fragment">
+<p>Single Threaded:</p>
+<p><img data-src="images/async1.png" /></p>
+</div>
+<div class="fragment">
+<p>Multi-Threaded:</p>
+<p><img data-src="images/async2.png" /></p>
+</div>
+</section></section>
+<section><section id="actix-actors-framework" class="title-slide slide level1"><h1>Actix actors framework</h1></section><section id="actor-model" class="slide level2">
+<h2>Actor model</h2>
+<p>An actor is a computational entity that contains state information and can send, receive and handle messages.</p>
+<p><img data-src="images/actors.png" /></p>
+<p>https://www.brianstorti.com/the-actor-model/</p>
+</section><section id="actix-features" class="slide level2">
+<h2>Actix features</h2>
+<ul>
+<li>Async/Sync actors</li>
+<li>Actor communication in a local/thread context</li>
+<li>Uses Futures for asynchronous message handling</li>
+<li>Actor supervision</li>
+<li>Typed messages</li>
+</ul>
+</section><section id="actor" class="slide level2">
+<h2>Actor</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">struct</span> MyActor <span class="op">{</span></a>
+<a class="sourceLine" id="cb4-2" title="2">    count: <span class="dt">usize</span>,</a>
+<a class="sourceLine" id="cb4-3" title="3"><span class="op">}</span></a>
+<a class="sourceLine" id="cb4-4" title="4"></a>
+<a class="sourceLine" id="cb4-5" title="5"><span class="kw">impl</span> Actor <span class="kw">for</span> MyActor <span class="op">{</span></a>
+<a class="sourceLine" id="cb4-6" title="6">    <span class="kw">type</span> Context = Context&lt;<span class="kw">Self</span>&gt;;</a>
+<a class="sourceLine" id="cb4-7" title="7"><span class="op">}</span></a></code></pre></div>
+</section><section id="message" class="slide level2">
+<h2>Message</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">struct</span> Ping(<span class="dt">usize</span>);</a>
+<a class="sourceLine" id="cb5-2" title="2"></a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="kw">impl</span> Message <span class="kw">for</span> Ping <span class="op">{</span></a>
+<a class="sourceLine" id="cb5-4" title="4">    <span class="kw">type</span> Result = <span class="dt">usize</span>;</a>
+<a class="sourceLine" id="cb5-5" title="5"><span class="op">}</span></a></code></pre></div>
+</section><section id="handler" class="slide level2">
+<h2>Handler</h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">impl</span> Handler&lt;Ping&gt; <span class="kw">for</span> MyActor <span class="op">{</span></a>
+<a class="sourceLine" id="cb6-2" title="2">    <span class="kw">type</span> Result = <span class="dt">usize</span>;</a>
+<a class="sourceLine" id="cb6-3" title="3"></a>
+<a class="sourceLine" id="cb6-4" title="4">    <span class="kw">fn</span> handle(&amp;<span class="kw">mut</span> <span class="kw">self</span>, msg: Ping, ctx: &amp;<span class="kw">mut</span> Context&lt;<span class="kw">Self</span>&gt;) -&gt; <span class="kw">Self</span>::<span class="dt">Result</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb6-5" title="5">        <span class="kw">self</span>.count += msg.<span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb6-6" title="6"></a>
+<a class="sourceLine" id="cb6-7" title="7">        <span class="kw">self</span>.count</a>
+<a class="sourceLine" id="cb6-8" title="8">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb6-9" title="9"><span class="op">}</span></a></code></pre></div>
+</section><section id="system" class="slide level2">
+<h2>System</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">fn</span> main() <span class="op">{</span></a>
+<a class="sourceLine" id="cb7-2" title="2">    <span class="kw">let</span> system = <span class="pp">System::</span>new(<span class="st">&quot;test&quot;</span>);</a>
+<a class="sourceLine" id="cb7-3" title="3"></a>
+<a class="sourceLine" id="cb7-4" title="4">    <span class="co">// start new actor</span></a>
+<a class="sourceLine" id="cb7-5" title="5">    <span class="kw">let</span> addr: Addr&lt;Unsync, _&gt; = MyActor<span class="op">{</span>count: <span class="dv">10</span><span class="op">}</span>.start();</a>
+<a class="sourceLine" id="cb7-6" title="6"></a>
+<a class="sourceLine" id="cb7-7" title="7">    <span class="co">// send message and get future for result</span></a>
+<a class="sourceLine" id="cb7-8" title="8">    <span class="kw">let</span> res = addr.send(Ping(<span class="dv">10</span>));</a>
+<a class="sourceLine" id="cb7-9" title="9"></a>
+<a class="sourceLine" id="cb7-10" title="10">    <span class="pp">Arbiter::</span>handle().spawn(</a>
+<a class="sourceLine" id="cb7-11" title="11">        res.map(|res| <span class="op">{</span></a>
+<a class="sourceLine" id="cb7-12" title="12">            <span class="pp">println!</span>(<span class="st">&quot;RESULT: {}&quot;</span>, res == <span class="dv">20</span>);</a>
+<a class="sourceLine" id="cb7-13" title="13">        <span class="op">}</span>)</a>
+<a class="sourceLine" id="cb7-14" title="14">        .map_err(|_| ()));</a>
+<a class="sourceLine" id="cb7-15" title="15"></a>
+<a class="sourceLine" id="cb7-16" title="16">    system.run();</a>
+<a class="sourceLine" id="cb7-17" title="17"><span class="op">}</span></a></code></pre></div>
+</section></section>
+<section><section id="actix-web-1" class="title-slide slide level1"><h1>Actix web</h1></section><section id="features" class="slide level2">
+<h2>Features</h2>
+<ul>
+<li>Support for HTTP/1.x and HTTP/2.0 protocols</li>
+<li>Streaming and pipelining</li>
+<li>Keep-alive and slow requests handling</li>
+<li>Client/server WebSockets support</li>
+<li>Transparent content compression/decompression (br, gzip, deflate)</li>
+<li>Configurable request routing</li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li>Graceful server shutdown</li>
+<li>Multipart streams</li>
+<li>Static assets</li>
+<li>SSL support with OpenSSL or native-tls</li>
+<li>Middleware (Logger, Session, Redis sessions, DefaultHeaders, CORS, CSRF)</li>
+<li>Includes an asynchronous HTTP client</li>
+<li>Built on top of Actix actor framework</li>
+</ul>
+<p>https://actix.rs</p>
+</section><section id="hello-world" class="slide level2">
+<h2>Hello World</h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">extern</span> <span class="kw">crate</span> actix_web;</a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="kw">use</span> <span class="pp">actix_web::</span><span class="op">{</span>server, App, HttpRequest<span class="op">}</span>;</a>
+<a class="sourceLine" id="cb8-3" title="3"></a>
+<a class="sourceLine" id="cb8-4" title="4"><span class="kw">fn</span> index(_req: HttpRequest) -&gt; &amp;<span class="ot">&#39;static</span> <span class="dt">str</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb8-5" title="5">    <span class="st">&quot;Hello world!&quot;</span></a>
+<a class="sourceLine" id="cb8-6" title="6"><span class="op">}</span></a>
+<a class="sourceLine" id="cb8-7" title="7"></a>
+<a class="sourceLine" id="cb8-8" title="8"><span class="kw">fn</span> main() <span class="op">{</span></a>
+<a class="sourceLine" id="cb8-9" title="9">    <span class="pp">server::</span>new(|| <span class="pp">App::</span>new().resource(<span class="st">&quot;/&quot;</span>, |r| r.f(index)))</a>
+<a class="sourceLine" id="cb8-10" title="10">        .bind(<span class="st">&quot;127.0.0.1:8088&quot;</span>)</a>
+<a class="sourceLine" id="cb8-11" title="11">        .unwrap()</a>
+<a class="sourceLine" id="cb8-12" title="12">        .run();</a>
+<a class="sourceLine" id="cb8-13" title="13"><span class="op">}</span></a></code></pre></div>
+</section><section id="application-state" class="slide level2">
+<h2>Application State</h2>
+<div class="sourceCode" id="cb9"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb9-1" title="1"><span class="kw">struct</span> AppState <span class="op">{</span></a>
+<a class="sourceLine" id="cb9-2" title="2">    counter: Cell&lt;<span class="dt">usize</span>&gt;,</a>
+<a class="sourceLine" id="cb9-3" title="3"><span class="op">}</span></a>
+<a class="sourceLine" id="cb9-4" title="4"></a>
+<a class="sourceLine" id="cb9-5" title="5"><span class="kw">fn</span> index(req: HttpRequest&lt;AppState&gt;) -&gt; <span class="dt">String</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb9-6" title="6">    <span class="kw">let</span> count = req.state().counter.get() + <span class="dv">1</span>; <span class="co">// &lt;- get count</span></a>
+<a class="sourceLine" id="cb9-7" title="7">    req.state().counter.set(count); <span class="co">// &lt;- store new count in state</span></a>
+<a class="sourceLine" id="cb9-8" title="8"></a>
+<a class="sourceLine" id="cb9-9" title="9">    <span class="pp">format!</span>(<span class="st">&quot;Request number: {}&quot;</span>, count) <span class="co">// &lt;- response with count</span></a>
+<a class="sourceLine" id="cb9-10" title="10"><span class="op">}</span></a>
+<a class="sourceLine" id="cb9-11" title="11"></a>
+<a class="sourceLine" id="cb9-12" title="12"><span class="co">// State initialization:</span></a>
+<a class="sourceLine" id="cb9-13" title="13"><span class="pp">App::</span>with_state(AppState <span class="op">{</span> counter: <span class="pp">Cell::</span>new(<span class="dv">0</span>) <span class="op">}</span>)</a>
+<a class="sourceLine" id="cb9-14" title="14">    .resource(<span class="st">&quot;/&quot;</span>, |r| r.method(<span class="pp">http::Method::</span>GET).f(index))</a>
+<a class="sourceLine" id="cb9-15" title="15">    .finish()</a></code></pre></div>
+</section><section class="slide level2">
+
+<p>Application state is shared with all routes and resources within the same application (<code>App</code>).</p>
+<p>Note: Http server constructs an application instance for each thread, thus application state must be constructed multiple times.</p>
+</section><section id="request-handler" class="slide level2">
+<h2>Request handler</h2>
+<div class="sourceCode" id="cb10"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb10-1" title="1"><span class="kw">fn</span> index(_req: HttpRequest) -&gt; &amp;<span class="ot">&#39;static</span> <span class="dt">str</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb10-2" title="2">    <span class="st">&quot;Hello world!&quot;</span></a>
+<a class="sourceLine" id="cb10-3" title="3"><span class="op">}</span></a></code></pre></div>
+<p><code>Handler</code> trait: A request handler accepts an <code>HttpRequest</code> instance as parameter and returns a type that can be converted into <code>HttpResponse</code> (<code>Responder</code> trait).</p>
+</section><section id="async-handlers" class="slide level2">
+<h2>Async handlers</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb11-1" title="1"><span class="kw">fn</span> async(req: HttpRequest) -&gt; <span class="dt">Box</span>&lt;Future&lt;Item=&amp;<span class="ot">&#39;static</span> <span class="dt">str</span>, Error=Error&gt;&gt; <span class="op">{</span></a>
+<a class="sourceLine" id="cb11-2" title="2">    result(<span class="cn">Ok</span>(<span class="st">&quot;Welcome!&quot;</span>))</a>
+<a class="sourceLine" id="cb11-3" title="3">        .responder()</a>
+<a class="sourceLine" id="cb11-4" title="4"><span class="op">}</span></a>
+<a class="sourceLine" id="cb11-5" title="5"></a>
+<a class="sourceLine" id="cb11-6" title="6"><span class="kw">fn</span> main() <span class="op">{</span></a>
+<a class="sourceLine" id="cb11-7" title="7">    <span class="pp">App::</span>new()</a>
+<a class="sourceLine" id="cb11-8" title="8">        .resource(<span class="st">&quot;/async&quot;</span>, |r| r.route().a(async)) <span class="co">// &lt;- use `a`</span></a>
+<a class="sourceLine" id="cb11-9" title="9">        .finish();</a>
+<a class="sourceLine" id="cb11-10" title="10"><span class="op">}</span></a></code></pre></div>
+</section><section id="path-info-extraction" class="slide level2">
+<h2>Path info extraction</h2>
+<div class="sourceCode" id="cb12"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb12-1" title="1"><span class="co">/// extract path info from &quot;/{username}/{count}/index.html&quot; url</span></a>
+<a class="sourceLine" id="cb12-2" title="2"><span class="co">/// {username} - deserializes to a String</span></a>
+<a class="sourceLine" id="cb12-3" title="3"><span class="co">/// {count} -  - deserializes to a u32</span></a>
+<a class="sourceLine" id="cb12-4" title="4"><span class="kw">fn</span> index(info: <span class="dt">Path</span>&lt;(<span class="dt">String</span>, <span class="dt">u32</span>)&gt;) -&gt; <span class="dt">Result</span>&lt;<span class="dt">String</span>&gt; <span class="op">{</span></a>
+<a class="sourceLine" id="cb12-5" title="5">    <span class="cn">Ok</span>(<span class="pp">format!</span>(<span class="st">&quot;Welcome {}! {}&quot;</span>, info.<span class="dv">0</span>, info.<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb12-6" title="6"><span class="op">}</span></a>
+<a class="sourceLine" id="cb12-7" title="7"></a>
+<a class="sourceLine" id="cb12-8" title="8"><span class="kw">fn</span> main() <span class="op">{</span></a>
+<a class="sourceLine" id="cb12-9" title="9">    <span class="kw">let</span> app = <span class="pp">App::</span>new().resource(</a>
+<a class="sourceLine" id="cb12-10" title="10">        <span class="st">&quot;/{username}/{count}/index.html&quot;</span>, <span class="co">// &lt;- define path parameters</span></a>
+<a class="sourceLine" id="cb12-11" title="11">        |r| r.method(<span class="pp">http::Method::</span>GET).with(index) <span class="co">// &lt;- use `with` extractor</span></a>
+<a class="sourceLine" id="cb12-12" title="12">        .finish();</a>
+<a class="sourceLine" id="cb12-13" title="13">    );</a>
+<a class="sourceLine" id="cb12-14" title="14"><span class="op">}</span></a></code></pre></div>
+</section><section class="slide level2">
+
+<p>Option 2: Access by calling extract() on the extractor</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb13-1" title="1"><span class="kw">use</span> <span class="pp">actix_web::</span>FromRequest;</a>
+<a class="sourceLine" id="cb13-2" title="2"></a>
+<a class="sourceLine" id="cb13-3" title="3"><span class="kw">fn</span> index(req: HttpRequest) -&gt; HttpResponse <span class="op">{</span></a>
+<a class="sourceLine" id="cb13-4" title="4">    <span class="kw">let</span> params = <span class="dt">Path</span>::&lt;(<span class="dt">String</span>, <span class="dt">String</span>)&gt;::extract(&amp;req);</a>
+<a class="sourceLine" id="cb13-5" title="5">    <span class="kw">let</span> info = <span class="pp">Json::</span>&lt;MyInfo&gt;::extract(&amp;req); </a>
+<a class="sourceLine" id="cb13-6" title="6"></a>
+<a class="sourceLine" id="cb13-7" title="7">    ...</a>
+<a class="sourceLine" id="cb13-8" title="8"><span class="op">}</span></a></code></pre></div>
+</section><section id="path-info-extraction-with-structs" class="slide level2">
+<h2>Path info extraction with structs</h2>
+<div class="sourceCode" id="cb14"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb14-1" title="1"><span class="at">#[</span>derive<span class="at">(</span>Deserialize<span class="at">)]</span></a>
+<a class="sourceLine" id="cb14-2" title="2"><span class="kw">struct</span> Info <span class="op">{</span></a>
+<a class="sourceLine" id="cb14-3" title="3">    username: <span class="dt">String</span>,</a>
+<a class="sourceLine" id="cb14-4" title="4"><span class="op">}</span></a>
+<a class="sourceLine" id="cb14-5" title="5"></a>
+<a class="sourceLine" id="cb14-6" title="6"><span class="co">/// extract path info using serde</span></a>
+<a class="sourceLine" id="cb14-7" title="7"><span class="kw">fn</span> index(info: <span class="dt">Path</span>&lt;Info&gt;) -&gt; <span class="dt">Result</span>&lt;<span class="dt">String</span>&gt; <span class="op">{</span></a>
+<a class="sourceLine" id="cb14-8" title="8">    <span class="cn">Ok</span>(<span class="pp">format!</span>(<span class="st">&quot;Welcome {}!&quot;</span>, info.username))</a>
+<a class="sourceLine" id="cb14-9" title="9"><span class="op">}</span></a></code></pre></div>
+</section><section id="query-parameter-extraction" class="slide level2">
+<h2>Query parameter extraction</h2>
+<div class="sourceCode" id="cb15"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb15-1" title="1"><span class="at">#[</span>derive<span class="at">(</span>Deserialize<span class="at">)]</span></a>
+<a class="sourceLine" id="cb15-2" title="2"><span class="kw">struct</span> Info <span class="op">{</span></a>
+<a class="sourceLine" id="cb15-3" title="3">    username: <span class="dt">String</span>,</a>
+<a class="sourceLine" id="cb15-4" title="4"><span class="op">}</span></a>
+<a class="sourceLine" id="cb15-5" title="5"></a>
+<a class="sourceLine" id="cb15-6" title="6"><span class="co">// this handler get called only if request&#39;s query contains `username` field</span></a>
+<a class="sourceLine" id="cb15-7" title="7"><span class="kw">fn</span> index(info: Query&lt;Info&gt;) -&gt; <span class="dt">String</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb15-8" title="8">    <span class="pp">format!</span>(<span class="st">&quot;Welcome {}!&quot;</span>, info.username)</a>
+<a class="sourceLine" id="cb15-9" title="9"><span class="op">}</span></a>
+<a class="sourceLine" id="cb15-10" title="10"></a>
+<a class="sourceLine" id="cb15-11" title="11"><span class="kw">fn</span> main() <span class="op">{</span></a>
+<a class="sourceLine" id="cb15-12" title="12">    <span class="kw">let</span> app = <span class="pp">App::</span>new().resource(</a>
+<a class="sourceLine" id="cb15-13" title="13">       <span class="st">&quot;/index.html&quot;</span>,</a>
+<a class="sourceLine" id="cb15-14" title="14">       |r| r.method(<span class="pp">http::Method::</span>GET).with(index)); <span class="co">// &lt;- use `with` extractor</span></a>
+<a class="sourceLine" id="cb15-15" title="15"><span class="op">}</span></a></code></pre></div>
+</section><section id="json-in-requests" class="slide level2">
+<h2>JSON in requests</h2>
+<div class="sourceCode" id="cb16"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb16-1" title="1"><span class="at">#[</span>derive<span class="at">(</span>Deserialize<span class="at">)]</span></a>
+<a class="sourceLine" id="cb16-2" title="2"><span class="kw">struct</span> Info <span class="op">{</span></a>
+<a class="sourceLine" id="cb16-3" title="3">    username: <span class="dt">String</span>,</a>
+<a class="sourceLine" id="cb16-4" title="4"><span class="op">}</span></a>
+<a class="sourceLine" id="cb16-5" title="5"></a>
+<a class="sourceLine" id="cb16-6" title="6"><span class="co">/// deserialize `Info` from request&#39;s body</span></a>
+<a class="sourceLine" id="cb16-7" title="7"><span class="kw">fn</span> index(info: Json&lt;Info&gt;) -&gt; <span class="dt">Result</span>&lt;<span class="dt">String</span>&gt; <span class="op">{</span></a>
+<a class="sourceLine" id="cb16-8" title="8">    <span class="cn">Ok</span>(<span class="pp">format!</span>(<span class="st">&quot;Welcome {}!&quot;</span>, info.username))</a>
+<a class="sourceLine" id="cb16-9" title="9"><span class="op">}</span></a>
+<a class="sourceLine" id="cb16-10" title="10"></a>
+<a class="sourceLine" id="cb16-11" title="11"><span class="kw">fn</span> main() <span class="op">{</span></a>
+<a class="sourceLine" id="cb16-12" title="12">    <span class="kw">let</span> app = <span class="pp">App::</span>new().resource(</a>
+<a class="sourceLine" id="cb16-13" title="13">       <span class="st">&quot;/index.html&quot;</span>,</a>
+<a class="sourceLine" id="cb16-14" title="14">       |r| r.method(<span class="pp">http::Method::</span>POST).with(index));  <span class="co">// &lt;- use `with` extractor</span></a>
+<a class="sourceLine" id="cb16-15" title="15"><span class="op">}</span></a></code></pre></div>
+</section><section id="json-in-responses" class="slide level2">
+<h2>JSON in responses</h2>
+<div class="sourceCode" id="cb17"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb17-1" title="1"><span class="at">#[</span>derive<span class="at">(</span>Serialize<span class="at">)]</span></a>
+<a class="sourceLine" id="cb17-2" title="2"><span class="kw">struct</span> MyObj <span class="op">{</span></a>
+<a class="sourceLine" id="cb17-3" title="3">    name: <span class="dt">String</span>,</a>
+<a class="sourceLine" id="cb17-4" title="4"><span class="op">}</span></a>
+<a class="sourceLine" id="cb17-5" title="5"></a>
+<a class="sourceLine" id="cb17-6" title="6"><span class="kw">fn</span> index(req: HttpRequest) -&gt; <span class="dt">Result</span>&lt;Json&lt;MyObj&gt;&gt; <span class="op">{</span></a>
+<a class="sourceLine" id="cb17-7" title="7">    <span class="cn">Ok</span>(Json(MyObj <span class="op">{</span></a>
+<a class="sourceLine" id="cb17-8" title="8">        name: req.match_info().query(<span class="st">&quot;name&quot;</span>)?,</a>
+<a class="sourceLine" id="cb17-9" title="9">    <span class="op">}</span>))</a>
+<a class="sourceLine" id="cb17-10" title="10"><span class="op">}</span></a></code></pre></div>
+</section><section id="form-handling" class="slide level2">
+<h2>Form handling</h2>
+<div class="sourceCode" id="cb18"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb18-1" title="1"><span class="at">#[</span>derive<span class="at">(</span>Deserialize<span class="at">)]</span></a>
+<a class="sourceLine" id="cb18-2" title="2"><span class="kw">struct</span> FormData <span class="op">{</span></a>
+<a class="sourceLine" id="cb18-3" title="3">    username: <span class="dt">String</span>,</a>
+<a class="sourceLine" id="cb18-4" title="4"><span class="op">}</span></a>
+<a class="sourceLine" id="cb18-5" title="5"></a>
+<a class="sourceLine" id="cb18-6" title="6"><span class="co">/// extract form data using serde</span></a>
+<a class="sourceLine" id="cb18-7" title="7"><span class="co">/// this handler gets called only if the content type is *x-www-form-urlencoded*</span></a>
+<a class="sourceLine" id="cb18-8" title="8"><span class="co">/// and the content of the request could be deserialized to a `FormData` struct</span></a>
+<a class="sourceLine" id="cb18-9" title="9"><span class="kw">fn</span> index(form: Form&lt;FormData&gt;) -&gt; <span class="dt">Result</span>&lt;<span class="dt">String</span>&gt; <span class="op">{</span></a>
+<a class="sourceLine" id="cb18-10" title="10">     <span class="cn">Ok</span>(<span class="pp">format!</span>(<span class="st">&quot;Welcome {}!&quot;</span>, form.username))</a>
+<a class="sourceLine" id="cb18-11" title="11"><span class="op">}</span></a></code></pre></div>
+</section><section id="multiple-extractors" class="slide level2">
+<h2>Multiple extractors</h2>
+<div class="sourceCode" id="cb19"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb19-1" title="1"><span class="kw">fn</span> index((path, query): (<span class="dt">Path</span>&lt;(<span class="dt">u32</span>, <span class="dt">String</span>)&gt;, Query&lt;Info&gt;)) -&gt; <span class="dt">String</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb19-2" title="2">    <span class="pp">format!</span>(<span class="st">&quot;Welcome {}!&quot;</span>, query.username)</a>
+<a class="sourceLine" id="cb19-3" title="3"><span class="op">}</span></a>
+<a class="sourceLine" id="cb19-4" title="4"></a>
+<a class="sourceLine" id="cb19-5" title="5"><span class="kw">fn</span> main() <span class="op">{</span></a>
+<a class="sourceLine" id="cb19-6" title="6">    <span class="kw">let</span> app = <span class="pp">App::</span>new().resource(</a>
+<a class="sourceLine" id="cb19-7" title="7">       <span class="st">&quot;/users/{userid}/{friend}&quot;</span>,                    <span class="co">// &lt;- define path parameters</span></a>
+<a class="sourceLine" id="cb19-8" title="8">       |r| r.method(<span class="pp">http::Method::</span>GET).with(index)); <span class="co">// &lt;- use `with` extractor</span></a>
+<a class="sourceLine" id="cb19-9" title="9"><span class="op">}</span></a></code></pre></div>
+<p>Actix provides extractor implementations for tuples (up to 10 elements) whose elements implement FromRequest.</p>
+</section><section id="request-routing" class="slide level2">
+<h2>Request routing</h2>
+<div class="sourceCode" id="cb20"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb20-1" title="1"><span class="kw">fn</span> index(req: HttpRequest) -&gt; <span class="kw">impl</span> Responder <span class="op">{</span></a>
+<a class="sourceLine" id="cb20-2" title="2">    <span class="st">&quot;Hello from the index page&quot;</span></a>
+<a class="sourceLine" id="cb20-3" title="3"><span class="op">}</span></a>
+<a class="sourceLine" id="cb20-4" title="4"></a>
+<a class="sourceLine" id="cb20-5" title="5"><span class="kw">fn</span> hello(path: <span class="dt">Path</span>&lt;<span class="dt">String</span>&gt;) -&gt; <span class="kw">impl</span> Responder <span class="op">{</span></a>
+<a class="sourceLine" id="cb20-6" title="6">    <span class="pp">format!</span>(<span class="st">&quot;Hello {}!&quot;</span>, *path)</a>
+<a class="sourceLine" id="cb20-7" title="7"><span class="op">}</span></a>
+<a class="sourceLine" id="cb20-8" title="8"></a>
+<a class="sourceLine" id="cb20-9" title="9"><span class="kw">fn</span> main() <span class="op">{</span></a>
+<a class="sourceLine" id="cb20-10" title="10">    <span class="pp">App::</span>new()</a>
+<a class="sourceLine" id="cb20-11" title="11">        .resource(<span class="st">&quot;/&quot;</span>, |r| r.method(<span class="pp">Method::</span>Get).with(index))</a>
+<a class="sourceLine" id="cb20-12" title="12">        .resource(<span class="st">&quot;/hello/{name}&quot;</span>, |r| r.method(<span class="pp">Method::</span>Get).with(hello))</a>
+<a class="sourceLine" id="cb20-13" title="13">        .finish();</a>
+<a class="sourceLine" id="cb20-14" title="14"><span class="op">}</span></a></code></pre></div>
+</section><section id="middleware---cors" class="slide level2">
+<h2>Middleware - CORS</h2>
+<div class="sourceCode" id="cb21"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb21-1" title="1"><span class="kw">let</span> app = <span class="pp">App::</span>new().configure(|app| <span class="op">{</span></a>
+<a class="sourceLine" id="cb21-2" title="2">    <span class="pp">Cors::</span>for_app(app) <span class="co">// &lt;- Construct CORS middleware builder</span></a>
+<a class="sourceLine" id="cb21-3" title="3">        .allowed_origin(<span class="st">&quot;https://www.rust-lang.org/&quot;</span>)</a>
+<a class="sourceLine" id="cb21-4" title="4">        .allowed_methods(<span class="pp">vec!</span><span class="op">[</span><span class="st">&quot;GET&quot;</span>, <span class="st">&quot;POST&quot;</span><span class="op">]</span>)</a>
+<a class="sourceLine" id="cb21-5" title="5">        .allowed_headers(<span class="pp">vec!</span><span class="op">[</span><span class="pp">http::header::</span>AUTHORIZATION, <span class="pp">http::header::</span>ACCEPT<span class="op">]</span>)</a>
+<a class="sourceLine" id="cb21-6" title="6">        .allowed_header(<span class="pp">http::header::</span>CONTENT_TYPE)</a>
+<a class="sourceLine" id="cb21-7" title="7">        .max_age(<span class="dv">3600</span>)</a>
+<a class="sourceLine" id="cb21-8" title="8">        .resource(<span class="co">/* ... */</span>)</a>
+<a class="sourceLine" id="cb21-9" title="9">        .register()</a>
+<a class="sourceLine" id="cb21-10" title="10"><span class="op">}</span>);</a></code></pre></div>
+</section><section id="middleware---cors-allow-from-all" class="slide level2">
+<h2>Middleware - CORS (allow from all)</h2>
+<div class="sourceCode" id="cb22"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb22-1" title="1"><span class="kw">let</span> app = <span class="pp">App::</span>new().configure(|app| <span class="op">{</span></a>
+<a class="sourceLine" id="cb22-2" title="2">    <span class="pp">Cors::</span>for_app(app) <span class="co">// &lt;- Construct CORS middleware builder</span></a>
+<a class="sourceLine" id="cb22-3" title="3">        .send_wildcard()</a>
+<a class="sourceLine" id="cb22-4" title="4">        .allowed_methods(<span class="pp">vec!</span><span class="op">[</span><span class="pp">Method::</span>GET<span class="op">]</span>)</a>
+<a class="sourceLine" id="cb22-5" title="5">        .resource(<span class="co">/* ... */</span>)</a>
+<a class="sourceLine" id="cb22-6" title="6">        .register()</a>
+<a class="sourceLine" id="cb22-7" title="7"><span class="op">}</span>);</a></code></pre></div>
+</section><section id="middleware---csrf" class="slide level2">
+<h2>Middleware - CSRF</h2>
+<div class="sourceCode" id="cb23"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb23-1" title="1"><span class="kw">let</span> app = <span class="pp">App::</span>new()</a>
+<a class="sourceLine" id="cb23-2" title="2">    .middleware(</a>
+<a class="sourceLine" id="cb23-3" title="3">        <span class="pp">csrf::CsrfFilter::</span>new().allowed_origin(<span class="st">&quot;https://www.example.com&quot;</span>),</a>
+<a class="sourceLine" id="cb23-4" title="4">    )</a>
+<a class="sourceLine" id="cb23-5" title="5">    .resource(<span class="st">&quot;/&quot;</span>, |r| <span class="op">{</span></a></code></pre></div>
+<p>Origin Header based.</p>
+</section><section id="middleware---user-sessions" class="slide level2">
+<h2>Middleware - User Sessions</h2>
+<div class="sourceCode" id="cb24"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb24-1" title="1"><span class="kw">fn</span> index(req: HttpRequest) -&gt; <span class="dt">Result</span>&lt;&amp;<span class="ot">&#39;static</span> <span class="dt">str</span>&gt; <span class="op">{</span></a>
+<a class="sourceLine" id="cb24-2" title="2">    <span class="co">// access session data</span></a>
+<a class="sourceLine" id="cb24-3" title="3">    <span class="kw">if</span> <span class="kw">let</span> <span class="cn">Some</span>(count) = req.session().<span class="pp">get::</span>&lt;<span class="dt">i32</span>&gt;(<span class="st">&quot;counter&quot;</span>)? <span class="op">{</span></a>
+<a class="sourceLine" id="cb24-4" title="4">        <span class="pp">println!</span>(<span class="st">&quot;SESSION value: {}&quot;</span>, count);</a>
+<a class="sourceLine" id="cb24-5" title="5">        req.session().set(<span class="st">&quot;counter&quot;</span>, count+<span class="dv">1</span>)?;</a>
+<a class="sourceLine" id="cb24-6" title="6">    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb24-7" title="7">        req.session().set(<span class="st">&quot;counter&quot;</span>, <span class="dv">1</span>)?;</a>
+<a class="sourceLine" id="cb24-8" title="8">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb24-9" title="9"></a>
+<a class="sourceLine" id="cb24-10" title="10">    <span class="cn">Ok</span>(<span class="st">&quot;Welcome!&quot;</span>)</a>
+<a class="sourceLine" id="cb24-11" title="11"><span class="op">}</span></a></code></pre></div>
+</section><section class="slide level2">
+
+<div class="sourceCode" id="cb25"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb25-1" title="1"><span class="kw">fn</span> main() <span class="op">{</span></a>
+<a class="sourceLine" id="cb25-2" title="2">    <span class="pp">actix::System::</span>run(|| <span class="op">{</span></a>
+<a class="sourceLine" id="cb25-3" title="3">        <span class="pp">server::</span>new(</a>
+<a class="sourceLine" id="cb25-4" title="4">          || <span class="pp">App::</span>new().middleware(</a>
+<a class="sourceLine" id="cb25-5" title="5">              <span class="pp">SessionStorage::</span>new(          <span class="co">// &lt;- create session middleware</span></a>
+<a class="sourceLine" id="cb25-6" title="6">                <span class="pp">CookieSessionBackend::</span>signed(&amp;<span class="op">[</span><span class="dv">0</span>; <span class="dv">32</span><span class="op">]</span>) <span class="co">// &lt;- create signed cookie session backend</span></a>
+<a class="sourceLine" id="cb25-7" title="7">                    .secure(<span class="cn">false</span>)</a>
+<a class="sourceLine" id="cb25-8" title="8">             )))</a>
+<a class="sourceLine" id="cb25-9" title="9">            .bind(<span class="st">&quot;127.0.0.1:59880&quot;</span>).unwrap()</a>
+<a class="sourceLine" id="cb25-10" title="10">            .start();</a>
+<a class="sourceLine" id="cb25-11" title="11">    <span class="op">}</span>);</a>
+<a class="sourceLine" id="cb25-12" title="12"><span class="op">}</span></a></code></pre></div>
+<ul>
+<li>Built-in: Session Cookie</li>
+<li>Other implementations must implement <code>SessionBackend</code></li>
+</ul>
+</section><section id="middleware---identity-handling" class="slide level2">
+<h2>Middleware - Identity handling</h2>
+<div class="sourceCode" id="cb26"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb26-1" title="1"><span class="kw">fn</span> index(req: HttpRequest) -&gt; <span class="dt">Result</span>&lt;<span class="dt">String</span>&gt; <span class="op">{</span></a>
+<a class="sourceLine" id="cb26-2" title="2">    <span class="co">// access request identity</span></a>
+<a class="sourceLine" id="cb26-3" title="3">    <span class="kw">if</span> <span class="kw">let</span> <span class="cn">Some</span>(id) = req.identity() <span class="op">{</span></a>
+<a class="sourceLine" id="cb26-4" title="4">        <span class="cn">Ok</span>(<span class="pp">format!</span>(<span class="st">&quot;Welcome! {}&quot;</span>, id))</a>
+<a class="sourceLine" id="cb26-5" title="5">    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb26-6" title="6">        <span class="cn">Ok</span>(<span class="st">&quot;Welcome Anonymous!&quot;</span>.to_owned())</a>
+<a class="sourceLine" id="cb26-7" title="7">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb26-8" title="8"><span class="op">}</span></a>
+<a class="sourceLine" id="cb26-9" title="9"></a>
+<a class="sourceLine" id="cb26-10" title="10"><span class="kw">fn</span> login(<span class="kw">mut</span> req: HttpRequest) -&gt; HttpResponse <span class="op">{</span></a>
+<a class="sourceLine" id="cb26-11" title="11">    req.remember(<span class="st">&quot;User1&quot;</span>.to_owned()); <span class="co">// &lt;- remember identity</span></a>
+<a class="sourceLine" id="cb26-12" title="12">    <span class="pp">HttpResponse::</span><span class="cn">Ok</span>().finish()</a>
+<a class="sourceLine" id="cb26-13" title="13"><span class="op">}</span></a>
+<a class="sourceLine" id="cb26-14" title="14"></a>
+<a class="sourceLine" id="cb26-15" title="15"><span class="kw">fn</span> logout(<span class="kw">mut</span> req: HttpRequest) -&gt; HttpResponse <span class="op">{</span></a>
+<a class="sourceLine" id="cb26-16" title="16">    req.forget(); <span class="co">// &lt;- remove identity</span></a>
+<a class="sourceLine" id="cb26-17" title="17">    <span class="pp">HttpResponse::</span><span class="cn">Ok</span>().finish()</a>
+<a class="sourceLine" id="cb26-18" title="18"><span class="op">}</span></a></code></pre></div>
+</section><section class="slide level2">
+
+<div class="sourceCode" id="cb27"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb27-1" title="1"><span class="kw">fn</span> main() <span class="op">{</span></a>
+<a class="sourceLine" id="cb27-2" title="2">    <span class="kw">let</span> app = <span class="pp">App::</span>new().middleware(<span class="pp">IdentityService::</span>new(</a>
+<a class="sourceLine" id="cb27-3" title="3">        <span class="co">// &lt;- create identity middleware</span></a>
+<a class="sourceLine" id="cb27-4" title="4">        <span class="pp">CookieIdentityPolicy::</span>new(&amp;<span class="op">[</span><span class="dv">0</span>; <span class="dv">32</span><span class="op">]</span>)    <span class="co">// &lt;- create cookie session backend</span></a>
+<a class="sourceLine" id="cb27-5" title="5">              .name(<span class="st">&quot;auth-cookie&quot;</span>)</a>
+<a class="sourceLine" id="cb27-6" title="6">              .secure(<span class="cn">false</span>),</a>
+<a class="sourceLine" id="cb27-7" title="7">    ));</a>
+<a class="sourceLine" id="cb27-8" title="8"><span class="op">}</span></a></code></pre></div>
+<ul>
+<li>Built-in: Cookie based identity</li>
+<li>Other implementations must implement <code>RequestIdentity</code></li>
+</ul>
+</section><section id="static-file-handler" class="slide level2">
+<h2>Static file handler</h2>
+<div class="sourceCode" id="cb28"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb28-1" title="1"><span class="kw">use</span> <span class="pp">actix_web::</span><span class="op">{</span>fs, App<span class="op">}</span>;</a>
+<a class="sourceLine" id="cb28-2" title="2"></a>
+<a class="sourceLine" id="cb28-3" title="3"><span class="kw">fn</span> main() <span class="op">{</span></a>
+<a class="sourceLine" id="cb28-4" title="4">    <span class="kw">let</span> app = <span class="pp">App::</span>new()</a>
+<a class="sourceLine" id="cb28-5" title="5">        .handler(<span class="st">&quot;/static&quot;</span>, <span class="pp">fs::StaticFiles::</span>new(<span class="st">&quot;.&quot;</span>))</a>
+<a class="sourceLine" id="cb28-6" title="6">        .finish();</a>
+<a class="sourceLine" id="cb28-7" title="7"><span class="op">}</span></a></code></pre></div>
+</section><section id="testing-support" class="slide level2">
+<h2>Testing support</h2>
+<div class="sourceCode" id="cb29"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb29-1" title="1"><span class="kw">fn</span> index(req: HttpRequest) -&gt; HttpResponse <span class="op">{</span></a>
+<a class="sourceLine" id="cb29-2" title="2">    <span class="kw">if</span> <span class="kw">let</span> <span class="cn">Some</span>(hdr) = req.headers().get(<span class="pp">header::</span>CONTENT_TYPE) <span class="op">{</span></a>
+<a class="sourceLine" id="cb29-3" title="3">        <span class="pp">HttpResponse::</span><span class="cn">Ok</span>().into()</a>
+<a class="sourceLine" id="cb29-4" title="4">    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb29-5" title="5">        <span class="pp">HttpResponse::</span>BadRequest().into()</a>
+<a class="sourceLine" id="cb29-6" title="6">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb29-7" title="7"><span class="op">}</span></a>
+<a class="sourceLine" id="cb29-8" title="8"></a>
+<a class="sourceLine" id="cb29-9" title="9"><span class="kw">fn</span> main() <span class="op">{</span></a>
+<a class="sourceLine" id="cb29-10" title="10">    <span class="kw">let</span> resp = <span class="pp">TestRequest::</span>with_header(<span class="st">&quot;content-type&quot;</span>, <span class="st">&quot;text/plain&quot;</span>)</a>
+<a class="sourceLine" id="cb29-11" title="11">        .run(index)</a>
+<a class="sourceLine" id="cb29-12" title="12">        .unwrap();</a>
+<a class="sourceLine" id="cb29-13" title="13">    <span class="pp">assert_eq!</span>(resp.status(), <span class="pp">StatusCode::</span>OK);</a>
+<a class="sourceLine" id="cb29-14" title="14"></a>
+<a class="sourceLine" id="cb29-15" title="15">    <span class="kw">let</span> resp = <span class="pp">TestRequest::</span><span class="kw">default</span>().run(index).unwrap();</a>
+<a class="sourceLine" id="cb29-16" title="16">    <span class="pp">assert_eq!</span>(resp.status(), <span class="pp">StatusCode::</span>BAD_REQUEST);</a>
+<a class="sourceLine" id="cb29-17" title="17"><span class="op">}</span></a></code></pre></div>
+</section><section id="http-client-api" class="slide level2">
+<h2>HTTP Client API</h2>
+<div class="sourceCode" id="cb30"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb30-1" title="1"><span class="kw">use</span> <span class="pp">actix_web::</span>client;</a>
+<a class="sourceLine" id="cb30-2" title="2"></a>
+<a class="sourceLine" id="cb30-3" title="3"><span class="kw">fn</span> main() <span class="op">{</span></a>
+<a class="sourceLine" id="cb30-4" title="4">    <span class="pp">tokio::</span>run(<span class="op">{</span></a>
+<a class="sourceLine" id="cb30-5" title="5">        <span class="pp">client::</span>get(<span class="st">&quot;http://www.rust-lang.org&quot;</span>)   <span class="co">// &lt;- Create request builder</span></a>
+<a class="sourceLine" id="cb30-6" title="6">            .header(<span class="st">&quot;User-Agent&quot;</span>, <span class="st">&quot;Actix-web&quot;</span>)</a>
+<a class="sourceLine" id="cb30-7" title="7">            .finish().unwrap()</a>
+<a class="sourceLine" id="cb30-8" title="8">            .send()                               <span class="co">// &lt;- Send http request</span></a>
+<a class="sourceLine" id="cb30-9" title="9">            .map_err(|_| ())</a>
+<a class="sourceLine" id="cb30-10" title="10">            .and_then(|response| <span class="op">{</span>                <span class="co">// &lt;- server http response</span></a>
+<a class="sourceLine" id="cb30-11" title="11">                <span class="pp">println!</span>(<span class="st">&quot;Response: {:?}&quot;</span>, response);</a>
+<a class="sourceLine" id="cb30-12" title="12">                <span class="cn">Ok</span>(())</a>
+<a class="sourceLine" id="cb30-13" title="13">            <span class="op">}</span>)</a>
+<a class="sourceLine" id="cb30-14" title="14">    <span class="op">}</span>);</a>
+<a class="sourceLine" id="cb30-15" title="15"><span class="op">}</span></a></code></pre></div>
+</section></section>
+<section><section id="real-world-applications" class="title-slide slide level1"><h1>Real World Applications</h1></section><section id="fundstelleninventar" class="slide level2">
+<h2>Fundstelleninventar</h2>
+<ul>
+<li>JsonAPI served with Actix</li>
+<li>DB access with Diesel</li>
+<li>React client app</li>
+</ul>
+</section><section id="time-tracking-ui" class="slide level2">
+<h2>Time tracking UI</h2>
+<ul>
+<li>JsonAPI served with Actix</li>
+<li>DB access with Diesel</li>
+<li>React client app</li>
+</ul>
+</section><section id="t-rex" class="slide level2">
+<h2>t-rex</h2>
+<ul>
+<li>Vector Tile Server</li>
+<li>Command line and web server</li>
+<li>Actix-Web + Actix (planned)</li>
+<li>Integrated web app</li>
+<li>PostGIS + GDAL data sources</li>
+</ul>
+<p>https://t-rex.tileserver.ch/</p>
+</section></section>
+    </div>
+  </div>
+
+  <script src="reveal.js/lib/js/head.min.js"></script>
+  <script src="reveal.js/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'reveal.js/plugin/zoom-js/zoom.js', async: true },
+          { src: 'reveal.js/plugin/notes/notes.js', async: true }
+        ]
+      });
+    </script>
+    </body>
+</html>
